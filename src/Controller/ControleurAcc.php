@@ -20,6 +20,7 @@ class ControleurAcc extends AbstractController
 		{
 			$greet = sprintf('<h1>Hello %s!</h1>', htmlspecialchars($name));
 		}
+		dump($request);
 
 		return new Response(<<<EOF
 <html>
