@@ -21,13 +21,14 @@ class ControleurAcc extends AbstractController
 			$greet = sprintf('<h1>Hello %s!</h1>', htmlspecialchars($name));
 		}
 		dump($request);
-
+		$l = $_SERVER["HTTP_USER_AGENT"];
 		return new Response(<<<EOF
 <html>
 <head>
 <title>Accueil</title>
 </head>
 <body>
+$l
 SALUT
 $greet
 <img src="/images/under-construction.gif" />

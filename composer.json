@@ -6,7 +6,6 @@
     "require": {
         "php": ">=8.0.2",
         "ext-ctype": "*",
-        "ext-http": "*",
         "ext-iconv": "*",
         "doctrine/annotations": "^1.0",
         "doctrine/doctrine-bundle": "^2.6",
@@ -100,7 +99,7 @@
     },
     "require-dev": {
         "symfony/debug-bundle": "6.0.*",
-        "symfony/maker-bundle": "^1.0",
+        "symfony/maker-bundle": "^1.38",
         "symfony/stopwatch": "6.0.*",
         "symfony/web-profiler-bundle": "6.0.*"
     }
