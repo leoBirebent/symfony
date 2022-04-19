@@ -28,10 +28,6 @@ class ControleurAcc extends AbstractController
 <title>Accueil</title>
 </head>
 <body>
-$l
-SALUT
-$greet
-<img src="/images/under-construction.gif" />
 </body>
 </html>
 EOF
