@@ -8,27 +8,49 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
+ * Utilisateur
+ *
  * @ORM\Entity
  * @ORM\Table(name="utilisateur")
  */
 class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 {
 	/**
+	 * @var string
+	 *
 	 * @ORM\Id
 	 * @ORM\Column(type="string", length=50)
 	 */
-	private $id;
+	private string $id;
 
 	/**
-	 * @ORM\Column(type="string", length=255)
+	 * @var string
+	 *
+	 * @ORM\Column(name="passwd", type="string", length=255, nullable=false)
 	 */
-	private $passwd;
+	private string $passwd;
+
+	/**
+	 * @var string
+	 *
+	 * @ORM\Column(name="permissions", type="string", length=255, nullable=false, options={"default"="UTILISATEUR", "string"="ADMIN", "string"="UTILISATEUR_ADMIN"}, )
+	 */
+	private string $permissions;
 
 
-	public function __construct($id="", $passwd="")
+	public function __construct($id="", $passwd="", $permissions="UTILISATEUR")
 	{
 		$this->id = $id;
 		$this->passwd = $passwd;
+		if ($permissions !== "ADMIN" && $permissions !== "UTILISATEUR_ADMIN")
+		{
+			$this->permissions = "UTILISATEUR";
+		}
+		else
+		{
+			$this->permissions = $permissions;
+		}
+
 	}
 
 
@@ -43,7 +65,6 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 
 	public function getRoles(): array
 	{
-		// TODO: Implement getRoles() method.
 		return array();
 	}
 
@@ -64,5 +85,13 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
 	public function getPassword(): string
 	{
 		return $this->passwd;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getPermissions(): string
+	{
+		return $this->permissions;
 	}
 }

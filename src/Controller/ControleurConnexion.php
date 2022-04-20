@@ -17,13 +17,13 @@ class ControleurConnexion extends AbstractController
 		$entityManager = $doctrine->getManager();
 
 
-		$utilisateur = new Utilisateur("stesf", "gezfze");
+		$utilisateur = new Utilisateur("steasfaf", "gezfze", "ADMIN");
 
 		// tell Doctrine you want to (eventually) save the Product (no queries yet)
-		$entityManager->persist($utilisateur);
+		//$entityManager->persist($utilisateur);
 
 		// actually executes the queries (i.e. the INSERT query)
-		$entityManager->flush();
+		//$entityManager->flush();
 
 		return new Response('Saved new product with id '.$utilisateur->getId());
 	}
