@@ -25,7 +25,7 @@ class ControleurConnexion extends AbstractController
 		// actually executes the queries (i.e. the INSERT query)
 		//$entityManager->flush();
 
-		return new Response('Saved new product with id '.$utilisateur->getId());
+		return new Response('Saved new product with id ');
 	}
 }
 ?>
