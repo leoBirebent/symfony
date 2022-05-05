@@ -5,6 +5,7 @@ use App\Entity\Utilisateur;
 use Doctrine\Persistence\ManagerRegistry;
 use http\QueryString;
 use JsonException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,7 +15,7 @@ class controleurConnexionAppli extends AbstractController
 {
 
 	/**
-	 * @Route("/session")
+	 * @Route("/session", name="loggin", methods={"POST"})
 	 * @param ManagerRegistry $doctrine
 	 * @param Request $request
 	 * @return JsonResponse

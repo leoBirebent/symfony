@@ -13,7 +13,7 @@ class controleurSyno extends AbstractController
 {
 
 	/**
-	 * @Route("/test", name="login")
+	 * @Route("/test", name="test")
 	 * @param ManagerRegistry $doctrine
 	 * @param Request $request
 	 * @return JsonResponse
@@ -45,14 +45,15 @@ class controleurSyno extends AbstractController
 
 		header('Content-Type: application/json');
 
-		$login = "cyril";
+		$login = "admin";
 		//$pass = "MAnaG3r16+";
 		$pass = "MAnaG3r16%2B";
 		$vAuth = 6;
-		$vApi = 2;
+		$vApi = 1;
 
-		$nomApi = "SYNO.Backup.App2.Backup";
-		//$nomApi = "SYNO.SDS.Backup.Client.Common.Log";
+		//$nomApi = "SYNO.FolderSharing.List";
+		//$nomApi = "SYNO.Backup.App2.Backup";
+		$nomApi = "SYNO.SDS.Backup.Client.Common.Log";
 
 		//$rep->setContent(json_encode($path));
 		//$rep->setContent($json);
@@ -73,44 +74,30 @@ class controleurSyno extends AbstractController
 
 
 			$path = $obj->data->{$nomApi}->path;
-
+			$repRequete = "TROUVE";
 
 
 			//$nomApi = "SYNO.SDS.Backup.Client.Common.Log";
-			//$json = file_get_contents($server.'/webapi/'.$path.'?api='.$nomApi.'&version='.$vApi.'&method=list&offset=0&limit=0&_sid='.$sid, false, stream_context_create($arrContextOptions));
+			$json = file_get_contents($server.'/webapi/'.$path.'?api='.$nomApi.'&version='.$vApi.'&method=list&offset=0&limit=0&_sid='.$sid, false, stream_context_create($arrContextOptions));
 
 			//$nomApi = "SYNO.Backup.App2.Backup";
-			$json = file_get_contents($server.'/webapi/'.$path.'?api='.$nomApi.'&version='.$vApi.'&method=list&_sid='.$sid, false, stream_context_create($arrContextOptions));
-			$obj = json_decode($json);
-			/*
+			//$json = file_get_contents($server.'/webapi/'.$path.'?api='.$nomApi.'&version='.$vApi.'&method=list&_sid='.$sid, false, stream_context_create($arrContextOptions));
 
-			foreach($obj->data->cameras as $cam)
+			//$nomApi = "SYNO.FileStation.BackgroundTask";
+			//$json = file_get_contents($server.'/webapi/'.$path.'?api='.$nomApi.'&version='.$vApi.'&method=list&_sid='.$sid, false, stream_context_create($arrContextOptions));
+
+			$obj = json_decode($json);
+
+			foreach($obj->data->log_list as $log)
 			{
 
-				$id_cam = $cam->id;
+				$id_cam = $log->event;
 				$repRequete .= "\nCam :" . $id_cam . "detected";
 				//check if cam is connected
-				if(!$cam->status)
-				{
-					//check if cam is activated and not recording
-					if($cam->enabled && !$cam->recStatus)
-					{
-						//showing a snapshot of the camera
-						//echo "<img src='".$server."/webapi/".$path."?api=SYNO.SurveillanceStation.Camera&version=1&method=GetSnapshot&preview=true&camStm=1&cameraId=".$id_cam."&_sid=".$sid."' alt='limage toto' width='320' height='240'>";
-					}
-					else
-					{
-						//echo "<p>Cam " . $id_cam . " skipped</p>";
-						$repRequete .= "// skipped";
-					}
-				}
-				else
-				{
-					$rep .= "// deconnected";
-				}
-			}*/
-			//$rep->setContent(json_encode($server.'/webapi/'.$path.'?api=SYNO.SDS.Backup.Client.Common.Log&version='.$vCamera.'&method=List&_sid='.$sid));
-			$rep->setContent($json);
+
+			}
+			//$rep->setContent($json);
+			$rep->setContent(json_encode($repRequete));
 			$json = file_get_contents($server.'/webapi/'.$path.'?api=SYNO.API.Auth&method=Logout&version='.$vAuth.'&session=SurveillanceStation&_sid='.$sid, false, stream_context_create($arrContextOptions));
 		}
 		else
