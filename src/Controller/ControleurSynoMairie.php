@@ -1,19 +1,17 @@
 <?php
+
 namespace App\Controller;
 
-
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Exception\JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class controleurSyno extends AbstractController
+class ControleurSynoMairie
 {
-
 	/**
-	 * @Route("/test", name="test")
+	 * @Route("/test2")
 	 * @param ManagerRegistry $doctrine
 	 * @param Request $request
 	 * @return JsonResponse
@@ -23,22 +21,35 @@ class controleurSyno extends AbstractController
 	public function test(): JsonResponse
 	{
 		$rep = new JsonResponse();
-		$arrContextOptions=array(
-			"ssl"=>array(
-				"verify_peer"=>false,
-				"verify_peer_name"=>false,
-			),
-		);
+
 		$rep->headers->set('Content-Type', 'application/json');
 		$rep->headers->set('Access-Control-Allow-Origin', '*');
 		$rep->headers->set( "Access-Control-Allow-Credentials", true);
 		$rep->headers->set("Access-Control-Allow-Headers", "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale");
 		$rep->headers->set("Access-Control-Allow-Methods", "POST, OPTIONS");
 
-		$server = "http://QuickConnect.to/new-r-organisation";
+		$server = "https://new-r-organisation.fr4.quickconnect.to";
+
+		$requete = curl_init();
+
+		// Return Page contents.
+
+
+		$url = $server . '/webapi/query.cgi?api=SYNO.API.Info&method=Query&version=1&query=SYNO..';
+
+		$defaults = array(
+			CURLOPT_URL => $url,
+			CURLOPT_HEADER => array( 'Content-Type: application/json'),
+			CURLOPT_RETURNTRANSFER => TRUE,
+		);
+
+		curl_setopt_array($requete, $defaults);
+
+
+		$json = curl_exec($requete);
+
 
 		//$json = file_get_contents($server.'/webapi/query.cgi?api=SYNO.API.Info&method=Query&version=1&query=SYNO.',false, stream_context_create($arrContextOptions));
-		$jsonApi = file_get_contents($server.'/webapi/query.cgi?api=SYNO.API.Info&method=Query&version=1&query=SYNO.',false, stream_context_create($arrContextOptions));
 		/*
 		$obj = json_decode($jsonApi, true, 512, JSON_THROW_ON_ERROR);
 
@@ -107,8 +118,20 @@ class controleurSyno extends AbstractController
 			$rep->setContent($jsonLog);
 		}
 		*/
-		$rep->setContent(json_encode($jsonApi));
+
+		if (!$json)
+		{
+			$er [0]= "Curl error: " . curl_error($requete) . "//";
+			$er [1] = curl_getinfo($requete);
+			$rep->setContent(json_encode($er));
+		}
+		else
+		{
+			$rep->setContent(json_encode($json));
+		}
+
+		curl_close($requete);
+
 		return $rep;
 	}
 }
-?>
