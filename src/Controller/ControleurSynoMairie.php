@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Doctrine\Persistence\ManagerRegistry;
+use phpDocumentor\Reflection\Types\False_;
 use Symfony\Component\HttpFoundation\Exception\JsonException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,13 +42,13 @@ class ControleurSynoMairie
 
 		$defaults = array(
 			CURLOPT_URL => $url,
-			CURLOPT_HEADER => array( 'Content-Type: application/json'),
+			//CURLOPT_HEADER => array( 'Content-Type: application/json'),
 			CURLOPT_VERBOSE => 1,
 			CURLOPT_RETURNTRANSFER => TRUE,
 			CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
-			CURLOPT_CUSTOMREQUEST => "POST",
-			CURLOPT_FOLLOWLOCATION => TRUE,
-			CURLOPT_CONNECTTIMEOUT => 10,
+			//CURLOPT_CUSTOMREQUEST => "POST",
+			//CURLOPT_FOLLOWLOCATION => TRUE,
+			//CURLOPT_CONNECTTIMEOUT => 10,
 		);
 
 		curl_setopt_array($requete, $defaults);
@@ -160,7 +161,7 @@ class ControleurSynoMairie
 		//$rep->headers->set("Access-Control-Allow-Headers", "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale");
 		//$rep->headers->set("Access-Control-Allow-Methods", "POST, OPTIONS");
 
-		$server = "http://new-r-organisation.quickconnect.to";
+		$server = "https://new-r-organisation.fr4.quickconnect.to";
 
 		$cookies = "../../cookies.txt";
 		$f = fopen($cookies, "rb");
@@ -174,16 +175,18 @@ class ControleurSynoMairie
 
 		$defaults = array(
 			CURLOPT_URL => $url,
-			CURLOPT_HEADER => array( 'Content-Type: application/json'),
+			CURLOPT_HEADER => 1,
 			CURLOPT_VERBOSE => 1,
-			CURLOPT_RETURNTRANSFER => TRUE,
+			CURLOPT_RETURNTRANSFER => 0,
+			//CURLOPT_SSL_VERIFYPEER => false,
 			CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
-			CURLOPT_CUSTOMREQUEST => "POST",
-			CURLOPT_FOLLOWLOCATION => TRUE,
-			CURLOPT_CONNECTTIMEOUT => 1000,
-			CURLOPT_COOKIEFILE => $cookies,
-			CURLOPT_COOKIEJAR => $cookies,
+			//CURLOPT_CUSTOMREQUEST => "POST",
+			//CURLOPT_FOLLOWLOCATION => TRUE,
+			//CURLOPT_CONNECTTIMEOUT => 1000,
+			//CURLOPT_COOKIEFILE => $cookies,
+			//CURLOPT_COOKIEJAR => $cookies,
 		);
+
 
 		curl_setopt_array($requete, $defaults);
 
@@ -261,6 +264,16 @@ class ControleurSynoMairie
 		}
 		*/
 
+		preg_match_all('/^Set-Cookie:\s*([^;]*)/mi',
+			$json,  $match_found);
+
+		$cookies2 = array();
+		foreach($match_found[1] as $item)
+		{
+			parse_str($item,  $cookies2);
+			$cookies = array_merge($cookies2,  $cookies2);
+		}
+
 		if (!$json)
 		{
 			$er [0]= "Curl error: " . curl_error($requete) . "//";
@@ -271,13 +284,14 @@ class ControleurSynoMairie
 		{
 			if ($f)
 			{
-				$rep->setContent(fread($f, filesize($cookies)));
+				//$rep->setContent(fread($f, filesize($cookies)));
 			}
 			else{
 				$rep->setContent("fezfef");
 			}
 		}
 
+		$rep->setContent(json_encode($cookies2));
 		curl_close($requete);
 
 		return $rep;

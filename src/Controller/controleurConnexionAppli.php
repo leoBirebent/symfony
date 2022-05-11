@@ -15,7 +15,7 @@ class controleurConnexionAppli extends AbstractController
 {
 
 	/**
-	 * @Route("/session", name="loggin", methods={"POST"})
+	 * @Route("/session")
 	 * @param ManagerRegistry $doctrine
 	 * @param Request $request
 	 * @return JsonResponse
