@@ -30,8 +30,9 @@ class ControleurSynoMairie
 		$rep->headers->set("Access-Control-Allow-Headers", "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale");
 		$rep->headers->set("Access-Control-Allow-Methods", "POST, OPTIONS");
 
-		$server = "http://new-r-organisation.quickconnect.to";
+		//$server = "http://new-r-organisation.quickconnect.to";
 		//$server = "https://new-r-organisation.fr4.quickconnect.to";
+		$server = "https://10.150.5.1:59201";
 
 		$requete = curl_init();
 
@@ -52,7 +53,6 @@ class ControleurSynoMairie
 		);
 
 		curl_setopt_array($requete, $defaults);
-
 
 		$json = curl_exec($requete);
 
@@ -137,6 +137,7 @@ class ControleurSynoMairie
 		{
 			$rep->setContent(json_encode($json));
 		}
+		//$rep->setContent($json);
 
 		curl_close($requete);
 
@@ -161,10 +162,12 @@ class ControleurSynoMairie
 		//$rep->headers->set("Access-Control-Allow-Headers", "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale");
 		//$rep->headers->set("Access-Control-Allow-Methods", "POST, OPTIONS");
 
-		$server = "https://new-r-organisation.fr4.quickconnect.to";
+		//$server = "http://new-r-organisation.quickconnect.to";
+		//$server = "https://new-r-organisation.fr4.quickconnect.to";
+		$server = "10.150.5.1:59201";
 
-		$cookies = "../../cookies.txt";
-		$f = fopen($cookies, "rb");
+		$cookies = "../cookies.txt";
+		$t = fopen($cookies, "rb");
 		$requete = curl_init();
 
 		// Return Page contents.
@@ -177,21 +180,20 @@ class ControleurSynoMairie
 			CURLOPT_URL => $url,
 			CURLOPT_HEADER => 1,
 			CURLOPT_VERBOSE => 1,
-			CURLOPT_RETURNTRANSFER => 0,
+			CURLOPT_RETURNTRANSFER => 1,
 			//CURLOPT_SSL_VERIFYPEER => false,
-			CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+			//CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
 			//CURLOPT_CUSTOMREQUEST => "POST",
-			//CURLOPT_FOLLOWLOCATION => TRUE,
+			CURLOPT_FOLLOWLOCATION => TRUE,
 			//CURLOPT_CONNECTTIMEOUT => 1000,
 			//CURLOPT_COOKIEFILE => $cookies,
 			//CURLOPT_COOKIEJAR => $cookies,
 		);
 
-
 		curl_setopt_array($requete, $defaults);
 
-
 		$json = curl_exec($requete);
+
 
 
 		//$json = file_get_contents($server.'/webapi/query.cgi?api=SYNO.API.Info&method=Query&version=1&query=SYNO.',false, stream_context_create($arrContextOptions));
@@ -267,11 +269,11 @@ class ControleurSynoMairie
 		preg_match_all('/^Set-Cookie:\s*([^;]*)/mi',
 			$json,  $match_found);
 
-		$cookies2 = array();
+		$getCookies2 = array();
 		foreach($match_found[1] as $item)
 		{
-			parse_str($item,  $cookies2);
-			$cookies = array_merge($cookies2,  $cookies2);
+			parse_str($item,  $getCookie2);
+			$getCookies2 = array_merge($getCookies2,  $getCookie2);
 		}
 
 		if (!$json)
@@ -282,16 +284,19 @@ class ControleurSynoMairie
 		}
 		else
 		{
-			if ($f)
+			/*
+			if ($t)
 			{
-				//$rep->setContent(fread($f, filesize($cookies)));
+				$rep->setContent(fread($t, filesize($cookies)));
 			}
 			else{
 				$rep->setContent("fezfef");
 			}
+			*/
 		}
 
-		$rep->setContent(json_encode($cookies2));
+		//$rep->setContent(json_encode($getCookies3));
+		$rep->setContent($json);
 		curl_close($requete);
 
 		return $rep;

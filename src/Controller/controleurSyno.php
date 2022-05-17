@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 
+use App\Entity\Information;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Exception\JsonException;
@@ -35,21 +36,24 @@ class controleurSyno extends AbstractController
 		$rep->headers->set("Access-Control-Allow-Headers", "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale");
 		$rep->headers->set("Access-Control-Allow-Methods", "POST, OPTIONS");
 
-		$server = "http://QuickConnect.to/new-r-organisation";
+
+		$server = "https://10.150.5.1:59201";
 
 		//$json = file_get_contents($server.'/webapi/query.cgi?api=SYNO.API.Info&method=Query&version=1&query=SYNO.',false, stream_context_create($arrContextOptions));
 		$jsonApi = file_get_contents($server.'/webapi/query.cgi?api=SYNO.API.Info&method=Query&version=1&query=SYNO.',false, stream_context_create($arrContextOptions));
-		/*
-		$obj = json_decode($jsonApi, true, 512, JSON_THROW_ON_ERROR);
+		$obj = json_decode($jsonApi, false, 512, JSON_THROW_ON_ERROR);
+
 
 		$path = $obj->data->{'SYNO.API.Auth'}->path;
 
 
 		header('Content-Type: application/json');
 
-		$login = "administrateur";
-		//$pass = "MAnaG3r16+";
-		$pass = "B8KF2Gpw3nm93";
+		//$login = "administrateur";
+		$login = "cyril";
+		// MAnaG3r16+
+		$pass = "MAnaG3r16%2B";
+		//$pass = "B8KF2Gpw3nm93";
 		$vAuth = 6;
 		$vApi = 1;
 
@@ -76,7 +80,6 @@ class controleurSyno extends AbstractController
 
 
 			$path = $obj->data->{$nomApi}->path;
-			$repRequete = "TROUVE";
 
 
 			//$nomApi = "SYNO.SDS.Backup.Client.Common.Log";
@@ -89,13 +92,31 @@ class controleurSyno extends AbstractController
 			//$json = file_get_contents($server.'/webapi/'.$path.'?api='.$nomApi.'&version='.$vApi.'&method=list&_sid='.$sid, false, stream_context_create($arrContextOptions));
 
 			$obj = json_decode($json);
+			$repRequete = ["Informations" => []];
 
 			foreach($obj->data->log_list as $log)
 			{
-
-				$id_cam = $log->event;
-				$repRequete .= "\nCam :" . $id_cam . "detected";
-				//check if cam is connected
+				$info = $log->level;
+				$date = $log->time;
+				$nomInfo = $log->event;
+				if (str_starts_with($nomInfo, "[Network][Sauvegarde Cloud]") || true)
+				{
+					switch ($info)
+					{
+						case "info" :
+							//$repRequete .= "\nInfo :" . $info . "detected";
+							$classInfo = new Information("Succès", $date);
+							break;
+						case "err":
+							//$repRequete .= "\nErreur :" . $info . "detected";
+							$classInfo = new Information("Erreur", $date);
+							break;
+						default:
+							//$repRequete .= "\nAvertissement :" . $info . "detected";
+							$classInfo = new Information("Attention", $date);
+					}
+					$repRequete["Informations"][] = $classInfo;
+				}
 
 			}
 			//$rep->setContent($json);
@@ -104,10 +125,9 @@ class controleurSyno extends AbstractController
 		}
 		else
 		{
-			$rep->setContent($jsonLog);
+			$rep->setContent(json_encode($server.'/webapi/'.$path.'?api=SYNO.API.Auth&method=Login&version='.$vAuth.'&account='.$login.'&passwd='.$pass.'&session=SurveillanceStation&format=sid'));
 		}
-		*/
-		$rep->setContent(json_encode($jsonApi));
+		//$rep->setContent(json_encode($obj->data));
 		return $rep;
 	}
 }
