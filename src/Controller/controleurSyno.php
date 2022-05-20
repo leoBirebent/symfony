@@ -37,7 +37,8 @@ class controleurSyno extends AbstractController
 		$rep->headers->set("Access-Control-Allow-Methods", "POST, OPTIONS");
 
 
-		$server = "https://10.150.5.1:59201";
+		//$server = "https://10.150.5.1:59201";
+		$server = "http://10.150.11.6:5000/";
 
 		//$json = file_get_contents($server.'/webapi/query.cgi?api=SYNO.API.Info&method=Query&version=1&query=SYNO.',false, stream_context_create($arrContextOptions));
 		$jsonApi = file_get_contents($server.'/webapi/query.cgi?api=SYNO.API.Info&method=Query&version=1&query=SYNO.',false, stream_context_create($arrContextOptions));
@@ -50,10 +51,12 @@ class controleurSyno extends AbstractController
 		header('Content-Type: application/json');
 
 		//$login = "administrateur";
-		$login = "cyril";
+		//$login = "cyril";
+		$login = "admindbsm";
 		// MAnaG3r16+
-		$pass = "MAnaG3r16%2B";
-		//$pass = "B8KF2Gpw3nm93";
+		//$pass = "MAnaG3r16%2B";
+		//Dbsmlehavre76$
+		$pass = "Dbsmlehavre76%24";
 		$vAuth = 6;
 		$vApi = 1;
 
@@ -79,6 +82,7 @@ class controleurSyno extends AbstractController
 			$obj = json_decode($json);
 
 
+
 			$path = $obj->data->{$nomApi}->path;
 
 
@@ -99,15 +103,27 @@ class controleurSyno extends AbstractController
 				$info = $log->level;
 				$date = $log->time;
 				$nomInfo = $log->event;
-				if (str_starts_with($nomInfo, "[Network][Sauvegarde Cloud]") || true)
+				if (str_starts_with($nomInfo, "[Network][Sauvegarde Cloud]"))
 				{
-					switch ($info)
+
+					if (str_starts_with($nomInfo,"[Network][Sauvegarde Cloud] Backup task finished successfully"))
 					{
-						case "info" :
+						$classInfo = new Information("$server :Succès", $date);
+						$repRequete["Informations"][] = $classInfo;
+					}
+					elseif (str_starts_with($nomInfo,"[Network][Sauvegarde Cloud] Failed to run relink task."))
+					{
+						$classInfo = new Information("$server :Erreur", $date);
+						$repRequete["Informations"][] = $classInfo;
+					}
+					/*
+					switch ($nomInfo)
+					{
+						case str_starts_with($nomInfo,"[Network][Sauvegarde Cloud] Backup task finished successfully"):
 							//$repRequete .= "\nInfo :" . $info . "detected";
 							$classInfo = new Information("Succès", $date);
 							break;
-						case "err":
+						case "[Network][Sauvegarde Cloud] Failed to run relink task.":
 							//$repRequete .= "\nErreur :" . $info . "detected";
 							$classInfo = new Information("Erreur", $date);
 							break;
@@ -116,18 +132,19 @@ class controleurSyno extends AbstractController
 							$classInfo = new Information("Attention", $date);
 					}
 					$repRequete["Informations"][] = $classInfo;
+					*/
 				}
 
 			}
 			//$rep->setContent($json);
-			$rep->setContent(json_encode($repRequete));
+			$rep->setContent(json_encode($repRequete, JSON_THROW_ON_ERROR));
 			$json = file_get_contents($server.'/webapi/'.$path.'?api=SYNO.API.Auth&method=Logout&version='.$vAuth.'&session=SurveillanceStation&_sid='.$sid, false, stream_context_create($arrContextOptions));
 		}
 		else
 		{
-			$rep->setContent(json_encode($server.'/webapi/'.$path.'?api=SYNO.API.Auth&method=Login&version='.$vAuth.'&account='.$login.'&passwd='.$pass.'&session=SurveillanceStation&format=sid'));
+			$rep->setContent($jsonLog);
 		}
-		//$rep->setContent(json_encode($obj->data));
+		//$rep->setContent(json_encode($server.'/webapi/query.cgi?api=SYNO.API.Info&method=Query&version=1&query=SYNO.'));
 		return $rep;
 	}
 }
