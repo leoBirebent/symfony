@@ -7,16 +7,22 @@ class Information
 	/**
 	 * @var string
 	 */
-	public string $information;
+	public string $nom;
 
 	/**
 	 * @var string
 	 */
 	public string $date;
 
-	public function __construct($information, $date)
+	/**
+	 * @var string
+	 */
+	public string $information;
+
+	public function __construct($nom, $date, $information)
 	{
-		$this->information = $information;
+		$this->nom = $nom;
 		$this->date = $date;
+		$this->information = $information;
 	}
 }

@@ -108,12 +108,12 @@ class controleurSyno extends AbstractController
 
 					if (str_starts_with($nomInfo,"[Network][Sauvegarde Cloud] Backup task finished successfully"))
 					{
-						$classInfo = new Information("$server :Succès", $date);
+						$classInfo = new Information($server, $date, "Succès");
 						$repRequete["Informations"][] = $classInfo;
 					}
 					elseif (str_starts_with($nomInfo,"[Network][Sauvegarde Cloud] Failed to run relink task."))
 					{
-						$classInfo = new Information("$server :Erreur", $date);
+						$classInfo = new Information($server, $date, "Erreur");
 						$repRequete["Informations"][] = $classInfo;
 					}
 					/*
